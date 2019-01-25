@@ -69,6 +69,10 @@ Channel
 ch_star_index = Channel.fromPath(params.star_index)
       .ifEmpty { exit 1, "STAR index not found: ${params.star_index}" }
 
+Channel.fromPath(params.gtf)
+  .ifEmpty { exit 1, "GTF annotation file not found: ${params.gtf}" }
+  .into { ch_gtf_star; ch_gtf_featureCounts; }
+
 /*
  * Step 0. Run FastQC on raw data
 */
