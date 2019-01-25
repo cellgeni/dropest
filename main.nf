@@ -26,14 +26,12 @@ genome                        : ${params.genome}
 annotation                    : ${params.annotation}
 config                        : ${params.config}
 barcode_list                  : ${params.barcode_list}
-email                         : ${params.email}
 output (output folder)        : ${params.output}
 """
 
 if (params.help) exit 1
 if (params.resume) exit 1, "Are you making the classical --resume typo? Be careful!!!! ;)"
 
-genomeFile          = file(params.genome)
 annotationFile      = file(params.annotation) 
 configFile        	= file(params.config) 
 barcodeFile        	= file(params.barcode_list) 
@@ -47,7 +45,6 @@ est_folder		= "${outputfolder}/Estimated_counts";
 rep_folder		= "${outputfolder}/Reports";
 
 if( !barcodeFile.exists() ) exit 1, "Missing barcode file: ${barcodeFile}"
-if( !genomeFile.exists() ) exit 1, "Missing genome file: ${genomeFile}"
 if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFile}"
 
 /*
