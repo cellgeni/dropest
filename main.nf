@@ -69,6 +69,8 @@ Channel
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
     .into { reads_for_fastqc; fastq_files_for_size_est}    
 
+ch_star_index = Channel.fromPath(params.star_index)
+      .ifEmpty { exit 1, "STAR index not found: ${params.star_index}" }
 
 /*
  * Step 0. Run FastQC on raw data
@@ -168,10 +170,8 @@ process mapping {
 	tag { pair_id }
 
 	input:
-	set val(samplename), file(reads) from ch_star
     file index from ch_star_index.collect()
     file gtf from ch_gtf_star.collect()
-	file STARgenome from STARgenomeIndex
 	set pair_id, file(reads) from tagged_files_for_alignment	
 
 	output:
@@ -188,8 +188,7 @@ process mapping {
         --outSAMtype BAM SortedByCoordinate \\
         --outSAMunmapped Within \\
         --runDirPerm All_RWX \\
-        --quantMode GeneCounts \\
-        --outFileNamePrefix ${samplename}.
+        --quantMode GeneCounts
     """
 
 }
