@@ -164,7 +164,7 @@ process getReadLength {
  * Step 5. Mapping with STAR
  */
 
-process mapping {
+process star {
 	label 'big_mem_cpus'
 	publishDir outputMapping
 	tag { pair_id }
