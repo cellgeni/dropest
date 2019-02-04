@@ -110,9 +110,11 @@ process dropTag {
     output:
     set pair_id, file("${pair_id}_tagged.fastq.gz") into tagged_files_for_alignment
     file("${pair_id}_tagged.fastq.gz") into tagged_files_for_fastqc
-  
+    
+    script:
+    reads2 = reads.reverse()
     """
-	droptag -S -p ${task.cpus} -c ${configFile} ${reads}
+	droptag -S -p ${task.cpus} -c ${configFile} ${reads2}
 	zcat *.tagged.*.gz >> ${pair_id}_tagged.fastq
 	gzip ${pair_id}_tagged.fastq
 	rm 	*.fastq.gz.tagged.*.gz
