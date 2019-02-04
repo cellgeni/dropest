@@ -204,7 +204,6 @@ process dropEst {
 
 	input:
 	set pair_id, file(tags) from STARmappedTags_for_est
-	file ("barcode_file.txt") from barcodeFile
 	file annotationFile
     file configFile
 
@@ -216,6 +215,7 @@ process dropEst {
 
 	script:		
     """
+    ln -s ${barcodeFile} .
 	dropest -m -w -g ${annotationFile} -c ${configFile} -o ${pair_id}.est ${tags} 
     """
 	
