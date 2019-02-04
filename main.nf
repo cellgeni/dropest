@@ -112,7 +112,7 @@ process dropTag {
     file("${pair_id}_tagged.fastq.gz") into tagged_files_for_fastqc
     
     script:
-    reads2 = reads.reverse()
+    reads2 = reads.reverse().join(" ")
     """
 	droptag -S -p ${task.cpus} -c ${configFile} ${reads2}
 	zcat *.tagged.*.gz >> ${pair_id}_tagged.fastq
