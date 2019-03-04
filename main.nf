@@ -107,7 +107,7 @@ process dropTag {
 	tag { pair_id }
 
     input:
-    set pair_id, file(reads) from read_pairs
+    val inputs_names from ch_input_files2
     file configFile
     
     output:
