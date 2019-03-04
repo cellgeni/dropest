@@ -111,8 +111,8 @@ process dropTag {
     file configFile
     
     output:
-    set pair_id, file("${pair_id}_tagged.fastq.gz") into tagged_files_for_alignment
-    file("${pair_id}_tagged.fastq.gz") into tagged_files_for_fastqc
+    set pair_id, file("${pair_id}_tagged.fastq.gz") into tagged_files_for_alignment2
+    file("${pair_id}_tagged.fastq.gz") into tagged_files_for_fastqc2
     
     script:
     reads2 = reads.reverse().join(" ")
@@ -139,8 +139,8 @@ process dropTag_inDrop_v3 {
     file configFile
     
     output:
-    set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment
-    file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc
+    set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment3
+    file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc3
     
     script:
     """
@@ -150,6 +150,9 @@ process dropTag_inDrop_v3 {
 	rm 	*.fastq.gz.tagged.*.gz
     """
 }   
+
+tagged_files_for_alignment2.mix(tagged_files_for_alignment3).set{tagged_files_for_alignment}
+tagged_files_for_fastqc2.mix(tagged_files_for_fastqc3).set{tagged_files_for_fastqc}
 
 /*
  * Step 2. FastQC of your trimmed files
