@@ -97,29 +97,26 @@ process fastqc {
 /*
  * Step 1. Launch droptag for tagging your files
  */
-process dropTag {    
+process dropTag_inDrop_v2 {    
 	publishDir filt_folder
 	label 'indrop'
 
     when:
     params.indrop_version == 'v2'
 
-	tag { pair_id }
-
     input:
     val inputs_names from ch_input_files2
     file configFile
     
     output:
-    set pair_id, file("${pair_id}_tagged.fastq.gz") into tagged_files_for_alignment2
-    file("${pair_id}_tagged.fastq.gz") into tagged_files_for_fastqc2
+    set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment2
+    file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc2
     
     script:
-    reads2 = reads.reverse().join(" ")
     """
-	droptag -S -p ${task.cpus} -c ${configFile} ${reads2}
-	zcat *.tagged.*.gz >> ${pair_id}_tagged.fastq
-	gzip ${pair_id}_tagged.fastq
+	droptag -S -p ${task.cpus} -c ${configFile} ${inputs_names}
+	zcat *.tagged.*.gz >> ${params.tag}_tagged.fastq
+	gzip ${params.tag}_tagged.fastq
 	rm 	*.fastq.gz.tagged.*.gz
     """
 }   
