@@ -62,8 +62,8 @@ Channel
     .into { ch_input_files2; ch_input_files3 }
 
 Channel
-    .fromPath( params.pairs )                                             
-    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
+    .from( params.input_files )
+//    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
     .into { reads_for_fastqc; fastq_files_for_size_est}    
 
 ch_star_index = Channel.fromPath(params.star_index)
@@ -82,7 +82,7 @@ process fastqc {
 	tag { read }
 
     input:
-    file(read) from reads_for_fastqc
+    val read from reads_for_fastqc
 
     output:
    	file("*_fastqc.*") into raw_fastqc_files
