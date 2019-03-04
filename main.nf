@@ -33,8 +33,8 @@ if (params.help) exit 1
 if (params.resume) exit 1, "Are you making the classical --resume typo? Be careful!!!! ;)"
 
 annotationFile      = file(params.annotation) 
-configFile        	= file(params.config) 
-barcodeFile        	= file(params.barcode_list) 
+configFile        	= file(params.config[params.version]) 
+barcodeFile        	= file(params.barcode_list[params.version]) 
 
 outputfolder    = "${params.output}"
 outputQC		= "${outputfolder}/QC"
@@ -57,9 +57,9 @@ if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFil
  * three elements: the pair ID, the first read-pair file and the second read-pair file
  */
 Channel
-    .fromFilePairs( params.pairs )                                             
-    .ifEmpty { error "Cannot find any reads matching: ${params.pairs}" }  
-    .set { read_pairs }
+    .from( params.input_files )
+//    .ifEmpty { error "Please specify a list of input files using input_files parameter" }  
+    .set { ch_input_files2, ch_input_files3 }
 
 Channel
     .fromPath( params.pairs )                                             
@@ -101,6 +101,9 @@ process dropTag {
 	publishDir filt_folder
 	label 'indrop'
 
+    when:
+    params.indrop_version == 'v2'
+
 	tag { pair_id }
 
     input:
@@ -121,6 +124,32 @@ process dropTag {
     """
 }   
 
+/*
+ * Step 1. Launch droptag for tagging your files
+ */
+process dropTag_inDrop_v3 {    
+	publishDir filt_folder
+	label 'indrop'
+
+    when:
+    params.indrop_version == 'v3'
+
+    input:
+    val inputs_names from ch_input_files3
+    file configFile
+    
+    output:
+    set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment
+    file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc
+    
+    script:
+    """
+	droptag -S -p ${task.cpus} -c ${configFile} ${inputs_names}
+	zcat *.tagged.*.gz >> ${params.tag}_tagged.fastq
+	gzip ${params.tag}_tagged.fastq
+	rm 	*.fastq.gz.tagged.*.gz
+    """
+}   
 
 /*
  * Step 2. FastQC of your trimmed files
