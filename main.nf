@@ -59,7 +59,7 @@ if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFil
 Channel
     .from( params.input_files )
 //    .ifEmpty { error "Please specify a list of input files using input_files parameter" }  
-    .set { ch_input_files2, ch_input_files3 }
+    .into { ch_input_files2; ch_input_files3 }
 
 Channel
     .fromPath( params.pairs )                                             
