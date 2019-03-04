@@ -33,8 +33,8 @@ if (params.help) exit 1
 if (params.resume) exit 1, "Are you making the classical --resume typo? Be careful!!!! ;)"
 
 annotationFile      = file(params.annotation) 
-configFile        	= file(params.config[params.version]) 
-barcodeFile        	= file(params.barcode_list[params.version]) 
+configFile        	= file(params.config[params.indrop_version]) 
+barcodeFile        	= file(params.barcode_list[params.indrop_version]) 
 
 outputfolder    = "${params.output}"
 outputQC		= "${outputfolder}/QC"
