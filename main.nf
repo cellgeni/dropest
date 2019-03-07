@@ -21,7 +21,6 @@ log.info """
 ====================================================
 BIOCORE@CRG indropSEQ - N F  ~  version ${version}
 ====================================================
-pairs                         : ${params.pairs}
 genome                        : ${params.genome}
 annotation                    : ${params.annotation}
 config                        : ${params.config}
