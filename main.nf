@@ -56,12 +56,12 @@ if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFil
  * three elements: the pair ID, the first read-pair file and the second read-pair file
  */
 Channel
-    .from( params.input_files )
+    .fromPath( params.input_files )
 //    .ifEmpty { error "Please specify a list of input files using input_files parameter" }  
     .into { ch_input_files2; ch_input_files3 }
 
 Channel
-    .from( params.input_files )
+    .fromPath( params.input_files )
 //    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
     .into { reads_for_fastqc; fastq_files_for_size_est}    
 
