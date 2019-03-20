@@ -104,7 +104,7 @@ process dropTag_inDrop_v2 {
     params.indrop_version == 'v2'
 
     input:
-    val inputs_names from ch_input_files2
+    val inputs_names from ch_input_files2.collect()
     file configFile
     
     output:
@@ -131,7 +131,7 @@ process dropTag_inDrop_v3 {
     params.indrop_version == 'v3'
 
     input:
-    val inputs_names from ch_input_files3
+    val inputs_names from ch_input_files3.collect()
     file configFile
     
     output:
