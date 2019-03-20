@@ -81,7 +81,7 @@ process fastqc {
 	tag { read }
 
     input:
-    val read from reads_for_fastqc
+    file read from reads_for_fastqc
 
     output:
    	file("*_fastqc.*") into raw_fastqc_files
