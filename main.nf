@@ -141,7 +141,7 @@ process dropTag_inDrop_v3 {
     
     script:
     """
-	droptag -S -p ${task.cpus} -c ${configFile} ${inputs_names}
+	droptag -S -p ${task.cpus} -c ${configFile} -t TGGTAACG ${inputs_names}
 	zcat *.tagged.*.gz >> ${params.tag}_tagged.fastq
 	gzip ${params.tag}_tagged.fastq
 	rm 	*.fastq.gz.tagged.*.gz
