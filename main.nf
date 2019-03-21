@@ -58,6 +58,7 @@ if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFil
 Channel
     .fromPath( params.input_files )
 //    .ifEmpty { error "Please specify a list of input files using input_files parameter" }  
+    .view()
     .into { ch_input_files2; ch_input_files3 }
 
 Channel
@@ -104,7 +105,7 @@ process dropTag_inDrop_v2 {
     params.indrop_version == 'v2'
 
     input:
-    file inputs_names from ch_input_files2.collect()
+    file inputs_names from ch_input_files2.toSortedList()
     file configFile
     
     output:
@@ -131,7 +132,7 @@ process dropTag_inDrop_v3 {
     params.indrop_version == 'v3'
 
     input:
-    file inputs_names from ch_input_files3.collect()
+    file inputs_names from ch_input_files3.toSortedList()
     file configFile
     
     output:
