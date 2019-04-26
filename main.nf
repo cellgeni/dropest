@@ -79,6 +79,8 @@ Channel.fromPath(params.gtf)
 process fastqc {
 	publishDir outputQC
 
+    when: false
+
 	tag { read }
 
     input:
