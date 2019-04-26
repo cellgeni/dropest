@@ -136,15 +136,17 @@ process dropTag_inDrop_v3 {
     file configFile
     
     output:
+    set pair_id, file("*.tagged.fastq.gz") into tagged_files_for_alignment
+    file("*.tagged.fastq.gz") into tagged_files_for_fastqc
+    set pair_id, file("*.tagged.params.gz") into params_files_for_estimation
+    set pair_id, file("*.tagged.rds") into tagged_rds_for_report
+    
     set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment3
     file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc3
     
     script:
     """
-	droptag -S -p ${task.cpus} -c ${configFile} -t TGGTAACG ${inputs_names}
-	zcat *.tagged.*.gz >> ${params.tag}_tagged.fastq
-	gzip ${params.tag}_tagged.fastq
-	rm 	*.fastq.gz.tagged.*.gz
+	droptag -r 0 -S -s -p ${task.cpus} -c ${configFile} -t TGGTAACG ${inputs_names}
     """
 }   
 
