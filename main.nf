@@ -51,6 +51,9 @@ if( !annotationFile.exists() ) exit 1, "Missing annotation file: ${annotationFil
 * else if (params.strand != "no") qualiOption = "non-strand-specific"
 */
 
+
+Channel.from(params.indexlist.tokenize(',')).set{ch_library_index}
+
 /*
  * Creates the `read_pairs` channel that emits for each read-pair a tuple containing
  * three elements: the pair ID, the first read-pair file and the second read-pair file
@@ -77,11 +80,11 @@ Channel.fromPath(params.gtf)
  * Step 0. Run FastQC on raw data
 */
 process fastqc {
-	publishDir outputQC
+    publishDir outputQC
+    tag { read }
 
-    when: false
-
-	tag { read }
+    when:
+    false
 
     input:
     file read from reads_for_fastqc
@@ -134,6 +137,7 @@ process dropTag_inDrop_v3 {
     params.indrop_version == 'v3'
 
     input:
+    val library_index from ch_library_index
     file inputs_names from ch_input_files3.toSortedList()
     file configFile
     
@@ -143,17 +147,20 @@ process dropTag_inDrop_v3 {
     set pair_id, file("*.tagged.params.gz") into params_files_for_estimation
     set pair_id, file("*.tagged.rds") into tagged_rds_for_report
     
-    set params.tag, file("${params.tag}_tagged.fastq.gz") into tagged_files_for_alignment3
-    file("${params.tag}_tagged.fastq.gz") into tagged_files_for_fastqc3
+    set library_index, file("${library_index}_tagged.fastq.gz") into tagged_files_for_alignment3
+    file("${library_index}_tagged.fastq.gz") into tagged_files_for_fastqc3
     
     script:
     """
-	droptag -r 0 -S -s -p ${task.cpus} -c ${configFile} -t TGGTAACG ${inputs_names}
+	droptag -r 0 -S -s -p ${task.cpus} -c ${configFile} -t ${library_index} ${inputs_names}
     """
 }   
 
-tagged_files_for_alignment2.mix(tagged_files_for_alignment3).set{tagged_files_for_alignment}
-tagged_files_for_fastqc2.mix(tagged_files_for_fastqc3).set{tagged_files_for_fastqc}
+// tagged_files_for_alignment2.mix(tagged_files_for_alignment3).set{tagged_files_for_alignment}
+// tagged_files_for_fastqc2.mix(tagged_files_for_fastqc3).set{tagged_files_for_fastqc}
+
+// don't mix, fix v3 first, then fix v2 code and mix.
+tagged_files_for_alignment3.set{tagged_files_for_alignment}
 
 /*
  * Step 2. FastQC of your trimmed files
@@ -182,6 +189,9 @@ process QCFiltReads {
 
 process getReadLength {   
 	tag { fastq_file_for_size_est }
+
+    when:
+    false
 
     input: 
     file(fastq_file_for_size_est) from fastq_files_for_size_est.first()
